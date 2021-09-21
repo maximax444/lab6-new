@@ -52,6 +52,9 @@ public class Server {
             MainConsole.println("Сервер начал слушать клиентов. ");
             MainConsole.println("Порт " + port + " / Адрес " + InetAddress.getLocalHost());
             MainConsole.println("Ожидаем подключения клиентов ");
+            MainServer.logger.info("Сервер начал слушать клиентов. ");
+            MainServer.logger.info("Порт " + port + " / Адрес " + InetAddress.getLocalHost());
+            MainServer.logger.info("Ожидаем подключения клиентов ");
             selector = Selector.open();
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
             while(true) {
@@ -102,9 +105,11 @@ public class Server {
             ServerSocketChannel acChannel = (ServerSocketChannel) selectionKey.channel();
             channel = acChannel.accept();
             MainConsole.println("Connection from: " + channel);
+            MainServer.logger.info("Connection from: " + channel);
 
         } catch (IOException e) {
             MainConsole.println("Unable to accept channel");
+            MainServer.logger.error("Unable to accept channel");
             e.printStackTrace();
             selectionKey.cancel();
         }
@@ -114,6 +119,7 @@ public class Server {
                 channel.register(selector, SelectionKey.OP_READ);
             } catch (IOException e) {
                 MainConsole.println("Unable to use channel");
+                MainServer.logger.error("Unable to accept channel");
                 e.printStackTrace();
                 selectionKey.cancel();
             }
@@ -133,15 +139,18 @@ public class Server {
             cmd = CommandReceiver.getCommand(socketChannel, (Connect) selectionKey.attachment(), soTimeout);
         } catch (IOException e) {
             MainConsole.println("IOException " + socketChannel);
+            MainServer.logger.error("IOException " + socketChannel);
             selectionKey.cancel();
 
 
         } catch (TimeoutException e) {
             MainConsole.println("Disconnect " + socketChannel);
+            MainServer.logger.error("Disconnect " + socketChannel);
             selectionKey.cancel();
         }
         if (cmd != null) {
             MainConsole.println("Received command: " + cmd);
+            MainServer.logger.info("Received command: " + cmd);
 
             /*try {
                 requestIn.handle(cmd);
@@ -151,6 +160,7 @@ public class Server {
             }*/
             socketChannel.write(ByteBuffer.wrap(Objects.requireNonNull(Serialization.SerializeObject(requestIn.handle(cmd)))));
             MainConsole.println("закрытие : " + selectionKey);
+            MainServer.logger.info("закрытие : " + selectionKey);
             selectionKey.cancel();
         }
     }

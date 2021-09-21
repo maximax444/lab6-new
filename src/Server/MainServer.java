@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class MainServer {
+
     public static Logger logger = LogManager.getLogger("ServerLogger");
     public static int port = 3578;
     public static final int CONNECTION_TIMEOUT = 60 * 1000;
