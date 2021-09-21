@@ -142,12 +142,13 @@ public class CollectionManager {
 
 
     public int countByPrice(int arg){
-        int count = 0;
-        for (Product prod : productCollection) {
+        /*int count = 0;*/
+        int count = (int) productCollection.stream().filter(ob -> ob.getPrice() == arg).count();
+        /*for (Product prod : productCollection) {
             if (prod.getPrice() == arg) {
                 count++;
             }
-        }
+        }*/
         return count;
     }
 
